@@ -47,4 +47,37 @@ class CodeWeaverPluginTest {
     final String result = Files.readString(srcDir.resolve("Foo.java"));
     Assertions.assertTrue(result.contains("// function();"));
   }
+
+  @Test
+  void taskRunsBeforeCompileJava() throws IOException {
+    final Path srcDir = projectDir.toPath().resolve("src/main/java");
+    Files.createDirectories(srcDir);
+    Files.writeString(srcDir.resolve("Foo.java"), """
+        public class Foo {
+            // #if TEST_FLAG
+            // void hello() {}
+            // #endif
+        }
+    """);
+
+    Files.writeString(projectDir.toPath().resolve("settings.gradle"), "");
+    Files.writeString(projectDir.toPath().resolve("build.gradle"), """
+        plugins {
+            id 'java'
+            id 'me.szypko.codeweaver'
+        }
+        codeWeaver {
+            flag 'TEST_FLAG', true
+        }
+    """);
+
+    GradleRunner.create()
+            .withProjectDir(projectDir)
+            .withArguments("compileJava")
+            .withPluginClasspath()
+            .build();
+
+    final String result = Files.readString(srcDir.resolve("Foo.java"));
+    Assertions.assertTrue(result.contains("void hello() {}"));
+  }
 }
