@@ -4,7 +4,7 @@ plugins {
     id 'maven-publish'
 }
 
-group = 'me.szypko.codeweaver'
+group = 'io.github.szypkoo'
 version = '0.1'
 
 repositories {
@@ -25,7 +25,7 @@ test {
 gradlePlugin {
     plugins {
         codeWeaver {
-            id = 'me.szypko.codeweaver'
+            id = 'io.github.szypkoo.codeweaver'
             implementationClass = 'me.szypko.codeweaver.CodeWeaverPlugin'
         }
     }

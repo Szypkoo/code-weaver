@@ -31,7 +31,7 @@ class CodeWeaverPluginTest {
         """
             plugins {
                 id 'java'
-                id 'me.szypko.codeweaver'
+                id 'io.github.szypkoo.codeweaver'
             }
             codeWeaver {
                 flag 'TEST_FLAG', false
@@ -64,7 +64,7 @@ class CodeWeaverPluginTest {
     Files.writeString(projectDir.toPath().resolve("build.gradle"), """
         plugins {
             id 'java'
-            id 'me.szypko.codeweaver'
+            id 'io.github.szypkoo.codeweaver'
         }
         codeWeaver {
             flag 'TEST_FLAG', true
