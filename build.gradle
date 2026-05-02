@@ -30,10 +30,15 @@ test {
 }
 
 gradlePlugin {
+    website = 'https://github.com/szypkoo/code-weaver'
+    vcsUrl = 'https://github.com/szypkoo/code-weaver.git'
     plugins {
         codeWeaver {
             id = 'io.github.szypkoo.codeweaver'
             implementationClass = 'me.szypko.codeweaver.CodeWeaverPlugin'
+            displayName = 'CodeWeaver'
+            description = 'Gradle plugin for conditional compilation using #if/#endif blocks'
+            tags = ['conditional', 'compilation']
         }
     }
 }
