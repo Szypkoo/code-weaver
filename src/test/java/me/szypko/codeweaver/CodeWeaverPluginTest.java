@@ -1,15 +1,14 @@
 package me.szypko.codeweaver;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-
 import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.GradleRunner;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CodeWeaverPluginTest {
   @TempDir File projectDir;
@@ -52,7 +51,8 @@ class CodeWeaverPluginTest {
             }
         """);
 
-    final BuildResult result = GradleRunner.create()
+    final BuildResult result =
+        GradleRunner.create()
             .withProjectDir(projectDir)
             .withArguments("printFlags")
             .withPluginClasspath()
