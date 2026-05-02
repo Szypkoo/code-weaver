@@ -29,4 +29,31 @@ class ConditionalProcessorTest {
     assertEquals("    function();", result.get(1));
     assertEquals("// #endif", result.get(2));
   }
+
+  @Test
+  void linesOutsideBlockAreUntouched() {
+    final List<String> input =
+        List.of("package foo;", "// #if TEST_FLAG", "    someCode();", "// #endif", "otherCode();");
+
+    final List<String> result = processor.process(input, Map.of("TEST_FLAG", false));
+
+    assertEquals("package foo;", result.get(0));
+    assertEquals("otherCode();", result.get(4));
+  }
+
+  @Test
+  void unknownFlag_treatedAsFalse() {
+    final List<String> input = List.of("// #if UNKNOWN_FLAG", "    someCode();", "// #endif");
+    final List<String> result = processor.process(input, Map.of());
+
+    assertEquals("    // someCode();", result.get(1));
+  }
+
+  @Test
+  void alreadyCommented_flagFalse_staysCommented() {
+    final List<String> input = List.of("// #if TEST_FLAG", "    // someCode();", "// #endif");
+    final List<String> result = processor.process(input, Map.of("TEST_FLAG", false));
+
+    assertEquals("    // someCode();", result.get(1));
+  }
 }

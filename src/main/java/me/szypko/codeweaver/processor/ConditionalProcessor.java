@@ -56,6 +56,11 @@ public class ConditionalProcessor {
       indent++;
     }
 
+    final String content = line.substring(indent);
+    if (content.startsWith("//")) {
+      return line;
+    }
+
     return line.substring(0, indent) + "// " + line.substring(indent);
   }
 }
