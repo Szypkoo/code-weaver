@@ -70,4 +70,34 @@ class ExpressionEvaluatorTest {
     Assertions.assertTrue(evaluator.evaluate("!(A && B)", Map.of("A", true, "B", false)));
     Assertions.assertFalse(evaluator.evaluate("!(A && B)", Map.of("A", true, "B", true)));
   }
+
+  @Test
+  void emptyExpression_throwsException() {
+    Assertions.assertThrows(IllegalArgumentException.class,
+            () -> evaluator.evaluate("", Map.of()));
+  }
+
+  @Test
+  void blankExpression_throwsException() {
+    Assertions.assertThrows(IllegalArgumentException.class,
+            () -> evaluator.evaluate("   ", Map.of()));
+  }
+
+  @Test
+  void missingRightOperand_throwsException() {
+    Assertions.assertThrows(IllegalArgumentException.class,
+            () -> evaluator.evaluate("A &&", Map.of("A", true)));
+  }
+
+  @Test
+  void missingLeftOperand_throwsException() {
+    Assertions.assertThrows(IllegalArgumentException.class,
+            () -> evaluator.evaluate("&& B", Map.of("B", true)));
+  }
+
+  @Test
+  void unclosedParenthesis_throwsException() {
+    Assertions.assertThrows(IllegalArgumentException.class,
+            () -> evaluator.evaluate("(A && B", Map.of("A", true, "B", true)));
+  }
 }
