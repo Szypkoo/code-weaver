@@ -73,31 +73,31 @@ class ExpressionEvaluatorTest {
 
   @Test
   void emptyExpression_throwsException() {
-    Assertions.assertThrows(IllegalArgumentException.class,
-            () -> evaluator.evaluate("", Map.of()));
+    Assertions.assertThrows(IllegalArgumentException.class, () -> evaluator.evaluate("", Map.of()));
   }
 
   @Test
   void blankExpression_throwsException() {
-    Assertions.assertThrows(IllegalArgumentException.class,
-            () -> evaluator.evaluate("   ", Map.of()));
+    Assertions.assertThrows(
+        IllegalArgumentException.class, () -> evaluator.evaluate("   ", Map.of()));
   }
 
   @Test
   void missingRightOperand_throwsException() {
-    Assertions.assertThrows(IllegalArgumentException.class,
-            () -> evaluator.evaluate("A &&", Map.of("A", true)));
+    Assertions.assertThrows(
+        IllegalArgumentException.class, () -> evaluator.evaluate("A &&", Map.of("A", true)));
   }
 
   @Test
   void missingLeftOperand_throwsException() {
-    Assertions.assertThrows(IllegalArgumentException.class,
-            () -> evaluator.evaluate("&& B", Map.of("B", true)));
+    Assertions.assertThrows(
+        IllegalArgumentException.class, () -> evaluator.evaluate("&& B", Map.of("B", true)));
   }
 
   @Test
   void unclosedParenthesis_throwsException() {
-    Assertions.assertThrows(IllegalArgumentException.class,
-            () -> evaluator.evaluate("(A && B", Map.of("A", true, "B", true)));
+    Assertions.assertThrows(
+        IllegalArgumentException.class,
+        () -> evaluator.evaluate("(A && B", Map.of("A", true, "B", true)));
   }
 }
