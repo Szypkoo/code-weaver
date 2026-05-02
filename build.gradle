@@ -7,7 +7,7 @@ plugins {
 }
 
 group = 'io.github.szypkoo'
-version = '0.1.4'
+version = '0.1.5'
 
 repositories {
     mavenCentral()
@@ -43,51 +43,45 @@ gradlePlugin {
     }
 }
 
-afterEvaluate {
-    publishing {
-        publications {
-            pluginMaven(MavenPublication) {
-                artifact sourcesJar
-                artifact javadocJar
-                pom {
-                    name = 'CodeWeaver'
-                    description = 'Gradle plugin for conditional compilation using #if/#endif blocks'
-                    url = 'https://github.com/szypkoo/code-weaver'
-                    licenses {
-                        license {
-                            name = 'MIT License'
-                            url = 'https://opensource.org/licenses/MIT'
-                        }
-                    }
-                    developers {
-                        developer {
-                            id = 'szypkoo'
-                            name = 'szypkoo'
-                            email = 'ssszypko@gmail.com'
-                        }
-                    }
-                    scm {
-                        connection = 'scm:git:git://github.com/szypkoo/code-weaver.git'
-                        developerConnection = 'scm:git:ssh://github.com/szypkoo/code-weaver.git'
-                        url = 'https://github.com/szypkoo/code-weaver'
-                    }
-                }
-            }
-        }
-    }
-}
-
 spotless {
     java {
         googleJavaFormat().reflowLongStrings().skipJavadocFormatting()
     }
 }
 
-signing {
-    def signingKey = System.getenv('GPG_SIGNING_KEY')
-    def signingPassword = System.getenv('GPG_SIGNING_PASSWORD')
-    useInMemoryPgpKeys(signingKey, signingPassword)
-    sign publishing.publications
+afterEvaluate {
+    publishing.publications.withType(MavenPublication).configureEach {
+        pom {
+            name = 'CodeWeaver'
+            description = 'Gradle plugin for conditional compilation using #if/#endif blocks'
+            url = 'https://github.com/szypkoo/code-weaver'
+            licenses {
+                license {
+                    name = 'MIT License'
+                    url = 'https://opensource.org/licenses/MIT'
+                }
+            }
+            developers {
+                developer {
+                    id = 'szypkoo'
+                    name = 'szypkoo'
+                    email = 'ssszypko@gmail.com'
+                }
+            }
+            scm {
+                connection = 'scm:git:git://github.com/szypkoo/code-weaver.git'
+                developerConnection = 'scm:git:ssh://github.com/szypkoo/code-weaver.git'
+                url = 'https://github.com/szypkoo/code-weaver'
+            }
+        }
+    }
+
+    signing {
+        def signingKey = System.getenv('GPG_SIGNING_KEY')
+        def signingPassword = System.getenv('GPG_SIGNING_PASSWORD')
+        useInMemoryPgpKeys(signingKey, signingPassword)
+        sign publishing.publications
+    }
 }
 
 nexusPublishing {
