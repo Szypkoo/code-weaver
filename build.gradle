@@ -1,0 +1,13 @@
+plugins {
+    id 'com.diffplug.spotless' version '8.4.0'
+    id 'java'
+}
+
+group = 'me.szypko'
+version = '0.1'
+
+spotless {
+    java {
+        googleJavaFormat().reflowLongStrings().skipJavadocFormatting()
+    }
+}
