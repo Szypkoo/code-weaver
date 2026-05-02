@@ -16,6 +16,9 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
+      - name: Make gradlew executable
+        run: chmod +x gradlew
+
       - name: Publish
         env:
           SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
