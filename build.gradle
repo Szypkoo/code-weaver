@@ -43,6 +43,38 @@ gradlePlugin {
     }
 }
 
+afterEvaluate {
+    publishing {
+        publications {
+            pluginMaven(MavenPublication) {
+                pom {
+                    name = 'CodeWeaver'
+                    description = 'Gradle plugin for conditional compilation using #if/#endif blocks'
+                    url = 'https://github.com/szypkoo/code-weaver'
+                    licenses {
+                        license {
+                            name = 'MIT License'
+                            url = 'https://opensource.org/licenses/MIT'
+                        }
+                    }
+                    developers {
+                        developer {
+                            id = 'szypkoo'
+                            name = 'szypkoo'
+                            email = 'ssszypko@gmail.com'
+                        }
+                    }
+                    scm {
+                        connection = 'scm:git:git://github.com/szypkoo/code-weaver.git'
+                        developerConnection = 'scm:git:ssh://github.com/szypkoo/code-weaver.git'
+                        url = 'https://github.com/szypkoo/code-weaver'
+                    }
+                }
+            }
+        }
+    }
+}
+
 spotless {
     java {
         googleJavaFormat().reflowLongStrings().skipJavadocFormatting()
@@ -53,19 +85,23 @@ publishing {
     publications {
         mavenJava(MavenPublication) {
             from components.java
-
             pom {
                 name = 'CodeWeaver'
                 description = 'Gradle plugin for conditional compilation using #if/#endif blocks'
-                url = 'https://github.com/Szypkoo/code-weaver'
-
+                url = 'https://github.com/szypkoo/code-weaver'
                 licenses {
                     license {
                         name = 'MIT License'
-                        url = 'https://opensource.org/license/MIT'
+                        url = 'https://opensource.org/licenses/MIT'
                     }
                 }
-
+                developers {
+                    developer {
+                        id = 'szypkoo'
+                        name = 'szypkoo'
+                        email = 'ssszypko@gmail.com'
+                    }
+                }
                 scm {
                     connection = 'scm:git:git://github.com/szypkoo/code-weaver.git'
                     developerConnection = 'scm:git:ssh://github.com/szypkoo/code-weaver.git'
@@ -74,6 +110,13 @@ publishing {
             }
         }
     }
+}
+
+signing {
+    def signingKey = System.getenv('GPG_SIGNING_KEY')
+    def signingPassword = System.getenv('GPG_SIGNING_PASSWORD')
+    useInMemoryPgpKeys(signingKey, signingPassword)
+    sign publishing.publications
 }
 
 nexusPublishing {
@@ -85,11 +128,4 @@ nexusPublishing {
             password = System.getenv('SONATYPE_PASSWORD')
         }
     }
-}
-
-signing {
-    def signingKey = System.getenv('GPG_SIGNING_KEY')
-    def signingPassword = System.getenv('GPG_SIGNING_PASSWORD')
-    useInMemoryPgpKeys(signingKey, signingPassword)
-    sign publishing.publications.mavenJava
 }
