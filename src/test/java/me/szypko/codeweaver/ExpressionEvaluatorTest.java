@@ -48,4 +48,26 @@ class ExpressionEvaluatorTest {
   void unknownFlagTreatedAsFalse() {
     Assertions.assertFalse(evaluator.evaluate("UNKNOWN", Map.of()));
   }
+
+  @Test
+  void parenthesesOrBeforeAnd() {
+    Assertions.assertTrue(
+        evaluator.evaluate("(A || B) && C", Map.of("A", false, "B", true, "C", true)));
+    Assertions.assertFalse(
+        evaluator.evaluate("(A || B) && C", Map.of("A", false, "B", true, "C", false)));
+  }
+
+  @Test
+  void nestedParentheses() {
+    Assertions.assertTrue(
+        evaluator.evaluate("(A && (B || C))", Map.of("A", true, "B", false, "C", true)));
+    Assertions.assertFalse(
+        evaluator.evaluate("(A && (B || C))", Map.of("A", true, "B", false, "C", false)));
+  }
+
+  @Test
+  void negatedParentheses() {
+    Assertions.assertTrue(evaluator.evaluate("!(A && B)", Map.of("A", true, "B", false)));
+    Assertions.assertFalse(evaluator.evaluate("!(A && B)", Map.of("A", true, "B", true)));
+  }
 }
