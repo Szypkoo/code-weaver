@@ -2,6 +2,7 @@ plugins {
     id 'com.diffplug.spotless' version '8.4.0'
     id 'java-gradle-plugin'
     id 'maven-publish'
+    id 'signing'
 }
 
 group = 'io.github.szypkoo'
@@ -15,6 +16,11 @@ dependencies {
     testImplementation gradleTestKit()
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.0'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
 }
 
 test {
@@ -35,4 +41,49 @@ spotless {
     java {
         googleJavaFormat().reflowLongStrings().skipJavadocFormatting()
     }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+
+            pom {
+                name = 'CodeWeaver'
+                description = 'Gradle plugin for conditional compilation using #if/#endif blocks'
+                url = 'https://github.com/Szypkoo/code-weaver'
+
+                licenses {
+                    license {
+                        name = 'MIT License'
+                        url = 'https://opensource.org/license/MIT'
+                    }
+                }
+
+                scm {
+                    connection = 'scm:git:git://github.com/szypkoo/code-weaver.git'
+                    developerConnection = 'scm:git:ssh://github.com/szypkoo/code-weaver.git'
+                    url = 'https://github.com/szypkoo/code-weaver'
+                }
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            name = 'central'
+            url = 'https://central.sonatype.com/api/v1/publisher/upload'
+            credentials {
+                username = System.getenv('SONATYPE_USERNAME') ?: ''
+                password = System.getenv('SONATYPE_PASSWORD') ?: ''
+            }
+        }
+    }
+}
+
+signing {
+    def signingKey = System.getenv('GPG_SIGNING_KEY')
+    def signingPassword = System.getenv('GPG_SIGNING_PASSWORD')
+    useInMemoryPgpKeys(signingKey, signingPassword)
+    sign publishing.publications.mavenJava
 }
