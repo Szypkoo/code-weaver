@@ -10,7 +10,7 @@ Sometimes you need code that should only exist in certain builds, for example: d
 
 ```groovy
 plugins {
-    id 'io.github.szypkoo.codeweaver' version '0.3'
+    id 'io.github.szypkoo.codeweaver' version '0.4.0'
 }
 
 codeWeaver {
@@ -22,7 +22,7 @@ Kotlin DSL:
 
 ```kotlin
 plugins {
-    id("io.github.szypkoo.codeweaver") version "0.3"
+    id("io.github.szypkoo.codeweaver") version "0.4.0"
 }
 
 codeWeaver {
