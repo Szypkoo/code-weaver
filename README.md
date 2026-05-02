@@ -36,12 +36,13 @@ Wrap any code you want to conditionally include:
 
 ```java
 public class MyService {
-
-    // #if MAINTENANCE_MODE
-    // return new MaintenanceResponse();
-    // #endif
-
-    return handleRequest();
+    public void handleRequestIfPossible() {
+        // #if MAINTENANCE_MODE
+        // return new MaintenanceResponse();
+        // #endif
+    
+        return handleRequest();
+    }
 }
 ```
 
