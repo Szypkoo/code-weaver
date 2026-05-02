@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 public class ConditionalProcessor {
+  private final ExpressionEvaluator evaluator = new ExpressionEvaluator();
+
   public List<String> process(final List<String> lines, final Map<String, Boolean> flags) {
     final List<String> result = new ArrayList<>();
     boolean insideBlock = false, blockEnabled = false;
@@ -15,7 +17,7 @@ public class ConditionalProcessor {
 
       if (trimmed.startsWith("// #if ")) {
         final String flagName = trimmed.substring("// #if ".length()).trim();
-        blockEnabled = flags.getOrDefault(flagName, false);
+        blockEnabled = evaluator.evaluate(flagName, flags);
         blockIndent = leadingSpaces(line);
         insideBlock = true;
         result.add(line);
