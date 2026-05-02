@@ -13,6 +13,43 @@ class CodeWeaverPluginTest {
   @TempDir File projectDir;
 
   @Test
+  void taskIsIdempotent() throws IOException {
+    Path srcDir = projectDir.toPath().resolve("src/main/java");
+    Files.createDirectories(srcDir);
+    Files.writeString(srcDir.resolve("Foo.java"), """
+        public class Foo {
+            // #if TEST_FLAG
+            void hello() {}
+            // #endif
+        }
+    """);
+
+    Files.writeString(projectDir.toPath().resolve("settings.gradle"), "");
+    Files.writeString(projectDir.toPath().resolve("build.gradle"), """
+        plugins {
+            id 'java'
+            id 'io.github.szypkoo.codeweaver'
+        }
+        codeWeaver {
+            flag 'TEST_FLAG', false
+        }
+    """);
+
+    GradleRunner runner = GradleRunner.create()
+            .withProjectDir(projectDir)
+            .withArguments("processConditionalsMainSources")
+            .withPluginClasspath();
+
+    runner.build();
+    String afterFirst = Files.readString(srcDir.resolve("Foo.java"));
+
+    runner.build();
+    String afterSecond = Files.readString(srcDir.resolve("Foo.java"));
+
+    Assertions.assertEquals(afterFirst, afterSecond);
+  }
+
+  @Test
   void pluginRegistersTaskAndProcessesFiles() throws IOException {
     final Path srcDir = projectDir.toPath().resolve("src/main/java");
 
