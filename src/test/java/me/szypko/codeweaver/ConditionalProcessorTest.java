@@ -12,22 +12,22 @@ class ConditionalProcessorTest {
 
   @Test
   void flagFalseComment() {
-    final List<String> input = List.of("// #if TEST_FLAG", "    function();", "// #endif");
+    List<String> input = List.of("    // #if TEST_FLAG", "        function();", "    // #endif");
 
-    final List<String> result = processor.process(input, Map.of("TEST_FLAG", false));
-    assertEquals("// #if TEST_FLAG", result.get(0));
+    List<String> result = processor.process(input, Map.of("TEST_FLAG", false));
+    assertEquals("    // #if TEST_FLAG", result.get(0));
     assertEquals("    // function();", result.get(1));
-    assertEquals("// #endif", result.get(2));
+    assertEquals("    // #endif", result.get(2));
   }
 
   @Test
   void flagTrueUncomment() {
-    final List<String> input = List.of("// #if TEST_FLAG", "    // function();", "// #endif");
+    List<String> input = List.of("    // #if TEST_FLAG", "    // function();", "    // #endif");
 
-    final List<String> result = processor.process(input, Map.of("TEST_FLAG", true));
-    assertEquals("// #if TEST_FLAG", result.get(0));
+    List<String> result = processor.process(input, Map.of("TEST_FLAG", true));
+    assertEquals("    // #if TEST_FLAG", result.get(0));
     assertEquals("    function();", result.get(1));
-    assertEquals("// #endif", result.get(2));
+    assertEquals("    // #endif", result.get(2));
   }
 
   @Test
@@ -43,10 +43,10 @@ class ConditionalProcessorTest {
 
   @Test
   void unknownFlag_treatedAsFalse() {
-    final List<String> input = List.of("// #if UNKNOWN_FLAG", "    someCode();", "// #endif");
-    final List<String> result = processor.process(input, Map.of());
+    List<String> input = List.of("// #if UNKNOWN_FLAG", "    someCode();", "// #endif");
+    List<String> result = processor.process(input, Map.of());
 
-    assertEquals("    // someCode();", result.get(1));
+    assertEquals("// someCode();", result.get(1));
   }
 
   @Test

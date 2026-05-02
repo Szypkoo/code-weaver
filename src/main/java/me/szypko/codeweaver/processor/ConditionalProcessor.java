@@ -8,12 +8,15 @@ public class ConditionalProcessor {
   public List<String> process(final List<String> lines, final Map<String, Boolean> flags) {
     final List<String> result = new ArrayList<>();
     boolean insideBlock = false, blockEnabled = false;
+    String blockIndent = "";
+
     for (final String line : lines) {
       final String trimmed = line.trim();
 
       if (trimmed.startsWith("// #if ")) {
         final String flagName = trimmed.substring("// #if ".length()).trim();
         blockEnabled = flags.getOrDefault(flagName, false);
+        blockIndent = leadingSpaces(line);
         insideBlock = true;
         result.add(line);
         continue;
@@ -26,7 +29,7 @@ public class ConditionalProcessor {
       }
 
       if (insideBlock) {
-        result.add(blockEnabled ? uncomment(line) : comment(line));
+        result.add(blockEnabled ? uncomment(line, blockIndent) : comment(line, blockIndent));
         continue;
       }
 
@@ -36,31 +39,43 @@ public class ConditionalProcessor {
     return result;
   }
 
-  private String uncomment(final String line) {
-    final int slashIndex = line.indexOf("//");
-    if (slashIndex == -1) {
+  private String leadingSpaces(String line) {
+    int i = 0;
+    while (i < line.length() && line.charAt(i) == ' ') {
+      i++;
+    }
+
+    return line.substring(0, i);
+  }
+
+  private String comment(String line, String blockIndent) {
+    if (line.isBlank()) {
       return line;
     }
 
-    String afterSlash = line.substring(slashIndex + 2);
+    final String trimmed = line.trim();
+    if (trimmed.startsWith("//")) {
+      return line;
+    }
+
+    return blockIndent + "// " + trimmed;
+  }
+
+  private String uncomment(String line, String blockIndent) {
+    if (line.isBlank()) {
+      return line;
+    }
+
+    final String trimmed = line.trim();
+    if (!trimmed.startsWith("//")) {
+      return line;
+    }
+
+    String afterSlash = trimmed.substring(2);
     if (afterSlash.startsWith(" ")) {
       afterSlash = afterSlash.substring(1);
     }
 
-    return line.substring(0, slashIndex) + afterSlash;
-  }
-
-  private String comment(final String line) {
-    int indent = 0;
-    while (indent < line.length() && line.charAt(indent) == ' ') {
-      indent++;
-    }
-
-    final String content = line.substring(indent);
-    if (content.startsWith("//")) {
-      return line;
-    }
-
-    return line.substring(0, indent) + "// " + line.substring(indent);
+    return blockIndent + afterSlash;
   }
 }
