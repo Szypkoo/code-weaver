@@ -163,4 +163,36 @@ class CodeWeaverPluginTest {
     final String result = Files.readString(srcDir.resolve("Foo.java"));
     Assertions.assertTrue(result.contains("void hello() {}"));
   }
+
+  @Test
+  void generatesIntelliJTemplates() throws IOException {
+    Files.writeString(projectDir.toPath().resolve("settings.gradle"), "");
+    Files.writeString(
+        projectDir.toPath().resolve("build.gradle"),
+        """
+            plugins {
+                id 'java'
+                id 'io.github.szypkoo.codeweaver'
+            }
+            codeWeaver {
+                flag 'DEBUG_MODE', true
+                flag 'FEATURE_X', false
+            }
+        """);
+
+    GradleRunner.create()
+        .withProjectDir(projectDir)
+        .withArguments("generateCodeWeaverIntelliJTemplates")
+        .withPluginClasspath()
+        .build();
+
+    Path templateFile = projectDir.toPath().resolve(".idea/liveTemplates/CodeWeaver.xml");
+    Assertions.assertTrue(Files.exists(templateFile));
+
+    String content = Files.readString(templateFile);
+    Assertions.assertTrue(content.contains("DEBUG_MODE"));
+    Assertions.assertTrue(content.contains("FEATURE_X"));
+    Assertions.assertTrue(content.contains("enum(\"DEBUG_MODE\",\"FEATURE_X\")") || 
+                          content.contains("enum(\"FEATURE_X\",\"DEBUG_MODE\")"));
+  }
 }

@@ -1,6 +1,7 @@
 package me.szypko.codeweaver;
 
 import me.szypko.codeweaver.extension.Extension;
+import me.szypko.codeweaver.task.GenerateIntelliJTemplatesTask;
 import me.szypko.codeweaver.task.ProcessConditionalsTask;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
@@ -10,6 +11,11 @@ public class CodeWeaverPlugin implements Plugin<Project> {
   @Override
   public void apply(Project target) {
     final Extension extension = target.getExtensions().create("codeWeaver", Extension.class);
+
+    target.getTasks().register("generateCodeWeaverIntelliJTemplates", GenerateIntelliJTemplatesTask.class, task -> {
+      task.getFlags().set(extension.getFlags());
+      task.getOutputDir().set(target.getRootProject().file(".idea"));
+    });
 
     target
         .getPlugins()
@@ -30,6 +36,7 @@ public class CodeWeaverPlugin implements Plugin<Project> {
                             taskName,
                             ProcessConditionalsTask.class,
                             task -> {
+                              task.dependsOn("generateCodeWeaverIntelliJTemplates");
                               task.getSourceDirs()
                                   .from(sourceSet.getAllJava().getSourceDirectories());
                               task.getFlags().set(extension.getFlags());
